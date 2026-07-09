@@ -8,7 +8,7 @@
   [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=flat&logo=vite&logoColor=FFD62E)]()
   [![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=flat&logo=framer&logoColor=blue)]()
   
-  <h3>🚀 <a href="https://saurabhssy07-eng.github.io/Stadium-IQ/">Live Demo (GitHub Pages)</a></h3>
+  <h3>🚀 <a href="https://stadium-iq-neon.vercel.app">Live Demo (Vercel)</a></h3>
 </div>
 
 ---
