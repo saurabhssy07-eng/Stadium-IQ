@@ -1,0 +1,448 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 133.333vh; /* Compensate for zoom: 0.75 on body */
+  padding: 1.5rem;
+  gap: 1.25rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Global Typography */
+  --font-heading: 24px;
+  --font-body: 15px;
+  --font-label: 11px;
+  --font-metrics: 34px;
+  
+  /* Color System */
+  --color-ai: #a855f7;
+  --color-op: #3b82f6;
+  --color-healthy: #22c55e;
+  --color-warn: #eab308;
+  --color-crit: #ef4444;
+  --color-inactive: #64748b;
+  
+  /* Layout Variables */
+  --sidebar-width-collapsed: 60px;
+  --sidebar-width-expanded: 200px;
+}
+
+/* -----------------------------
+   AI Health Topbar & KPIs
+----------------------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1.25rem 2rem;
+  border-radius: 12px;
+  flex-shrink: 0;
+  gap: 2rem;
+}
+
+.healthMetric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* User asked for HUGE numbers first, then labels */
+.healthValue {
+  font-weight: 800;
+  font-size: var(--font-metrics);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+.healthLabel {
+  font-size: var(--font-label);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.valueAccent { color: var(--color-ai); }
+.valueSuccess { color: var(--color-healthy); }
+
+/* -----------------------------
+   Main Content Layout
+----------------------------- */
+.mainWrapper {
+  display: flex;
+  flex: 1;
+  gap: 1.25rem;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Sidebar Hover Expansion */
+.sidebarWrapper {
+  position: relative;
+  width: var(--sidebar-width-collapsed);
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--sidebar-width-collapsed);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s, background 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+}
+
+.sidebar:hover {
+  width: var(--sidebar-width-expanded);
+  align-items: flex-start;
+  padding: 2rem 1.5rem;
+  background: rgba(15, 23, 42, 0.85); /* Slightly darker when expanded to stand out */
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+  overflow: visible;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-inactive);
+  transition: all 0.2s ease;
+  position: relative;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+.navButton span {
+  opacity: 0;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+.sidebar:hover .navButton span {
+  opacity: 1;
+}
+
+.navButton:hover, .navButton.active {
+  color: var(--color-ai);
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+}
+.sidebar:hover .navButton.active::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--color-ai);
+  border-radius: 50%;
+  box-shadow: 0 0 5px var(--color-ai);
+}
+
+/* -----------------------------
+   Responsive Grid
+----------------------------- */
+.mainGrid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 0;
+  min-width: 0;
+}
+
+.mainGrid > * {
+  min-width: 0;
+}
+
+/* Auto Layout Optimization: Flex-based rows */
+.gridRow {
+  display: flex;
+  gap: 1.25rem;
+  min-height: 300px;
+  min-width: 0;
+}
+
+/* Map 70% | Pipeline 30% */
+.mapArea { flex: 7; min-width: 0; }
+.pipelineArea { flex: 3; min-width: 0; }
+
+/* Incidents 50% | Explainability 50% */
+.incidentsArea { flex: 1; min-width: 0; }
+.explainArea { flex: 1; min-width: 0; }
+
+/* Tabbed Panel */
+.tabbedArea {
+  flex: 1;
+  min-height: 400px;
+  min-width: 0;
+}
+
+/* Recent Events Footer */
+.eventsFooter {
+  flex-shrink: 0;
+}
+
+/* -----------------------------
+   Panel Component
+----------------------------- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative; /* For framer-motion overlay */
+  overflow: hidden;
+  min-width: 0;
+}
+
+.panelHeader {
+  font-size: var(--font-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.panelHeader:hover {
+  color: #fff;
+}
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panelContent {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+}
+.panelContent::-webkit-scrollbar { display: none; }
+
+/* -----------------------------
+   Deep Inspection (Focus Mode)
+----------------------------- */
+.deepInspectionOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(16px);
+  z-index: 999;
+  display: flex;
+  padding: 2rem;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.breadcrumb span {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+.closeBtn {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.zoomedPanelContent {
+  flex: 1;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+}
+
+/* -----------------------------
+   Responsive Breakpoints
+----------------------------- */
+/* Desktop XL (1600+) - Handled by default styles above */
+
+/* Desktop (1400px - 1600px) */
+@media (max-width: 1600px) {
+  .container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .topbar {
+    padding: 1rem;
+  }
+  .healthValue {
+    font-size: 28px;
+  }
+}
+
+/* Compact (1100px - 1400px) */
+@media (max-width: 1400px) {
+  .gridRow {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .mapArea { height: 400px; flex: none; }
+  .pipelineArea { height: 300px; flex: none; }
+  .incidentsArea { height: 400px; flex: none; }
+  .explainArea { height: 400px; flex: none; }
+}
+
+/* Tablet (< 1100px) */
+@media (max-width: 1100px) {
+  .container {
+    padding: 0.5rem;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 1rem;
+  }
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0;
+    border-radius: 0;
+    z-index: 100;
+  }
+  .sidebar:hover {
+    width: 100%;
+    align-items: center;
+    padding: 0;
+  }
+  .sidebar:hover .navButton span {
+    display: none;
+  }
+  .mainWrapper {
+    margin-bottom: 60px; /* Space for bottom nav */
+  }
+}
+
+/* -----------------------------
+   Demo Menu
+----------------------------- */
+.demoMenu {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  margin-left: 1rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 200px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.demoMenuHeader {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.demoMenu button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.demoMenu button:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+/* -----------------------------
+   Mission Control Alerts
+----------------------------- */
+.topbarActiveIncident {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.missionControlAlert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(239, 68, 68, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  animation: pulse-border 2s infinite;
+}
+
+.missionAlertIcon {
+  color: var(--color-crit);
+}
+
+.missionAlertText {
+  color: var(--color-crit);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}

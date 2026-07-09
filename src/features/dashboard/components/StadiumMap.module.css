@@ -1,0 +1,210 @@
+.mapContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.blueprint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.labels text {
+  fill: rgba(255, 255, 255, 0.3);
+  font-size: 4px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  pointer-events: none;
+}
+
+.fanDot {
+  fill: var(--color-secondary);
+  opacity: 0.8;
+  /* Smooth animation via CSS transitions */
+  transition: cx 3s linear, cy 3s linear;
+}
+
+/* Zone Heatmaps */
+.heatPulse {
+  transition: fill 2s ease-in-out, opacity 2s ease-in-out;
+  animation: heatBreathing 4s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes heatBreathing {
+  0% { opacity: 0.7; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Legend Overlay */
+.legend {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(2, 6, 23, 0.85);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(4px);
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px currentColor;
+}
+.dot.normal { background: var(--color-success); color: var(--color-success); }
+.dot.moderate { background: var(--color-info); color: var(--color-info); }
+.dot.heavy { background: var(--color-warning); color: var(--color-warning); }
+.dot.critical { background: var(--color-danger); color: var(--color-danger); }
+
+/* Incident Markers */
+.incidentGroup {
+  animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes dropIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.incidentRipple {
+  animation: ripple 2s infinite ease-out;
+  stroke-width: 0.5;
+}
+
+.incidentRipple2 {
+  animation: ripple 2s infinite ease-out;
+  animation-delay: 1s;
+  stroke-width: 0.5;
+}
+
+@keyframes ripple {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.incidentEta {
+  font-size: 4px;
+  font-weight: 800;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8));
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Floating Zone Stats */
+.floatingStatsContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.floatingStat {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  animation: floatIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+@keyframes floatIn {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.floatingStat.critical { border-color: var(--color-danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+.floatingStat.heavy { border-color: var(--color-warning); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.statZone {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statStatus {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.critical .statStatus { color: var(--color-danger); }
+.heavy .statStatus { color: var(--color-warning); }
+
+.statBody {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.statScore {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+.critical .statScore { color: var(--color-danger); text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+.heavy .statScore { color: var(--color-warning); }
+
+.statFans {
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+}
+
+/* Crowd Streams */
+.crowdStreams path {
+  stroke-linecap: round;
+  stroke-dasharray: 0.1, 4; /* Tiny dash with round cap creates a dot */
+  animation: streamFlow 1.5s linear infinite;
+  stroke-width: 1.5;
+}
+
+.streamIngress {
+  stroke: var(--color-info);
+  opacity: 0.9;
+}
+
+.streamFlow {
+  stroke: rgba(255, 255, 255, 0.6);
+  opacity: 0.7;
+  animation-duration: 2.5s;
+}
+
+@keyframes streamFlow {
+  to { stroke-dashoffset: -16.4; } /* Multiple of dasharray sum (4.1) for smooth looping */
+}
