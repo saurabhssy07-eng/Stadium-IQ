@@ -67,8 +67,6 @@ The core of the product is the autonomous loop:
 ### Fan App
 ![Fan](assets/fan.png)
 
-## 7. Demo Video
-[https://youtu.be/xxxxxxxx](https://youtu.be/xxxxxxxx)
 
 ## 8. Features
 - **Live Digital Stadium Twin:** 200 independently moving fan agents generating organic crowd density data.
@@ -77,7 +75,30 @@ The core of the product is the autonomous loop:
 - **Multilingual Fan App:** Fans can report issues using voice or text from their mobile devices.
 - **Smart Demo Mode:** A developer panel built specifically to guarantee deterministic scenario triggering (Spills, Medical, Lost Child) during presentations.
 
-## 9. Testing
+## 9. Tech Stack
+
+### Frontend
+- React
+- TypeScript
+- Vite
+- CSS Modules
+
+### Animation
+- Framer Motion
+
+### Visualization
+- Pure CSS / SVG
+- Lucide Icons
+
+### Architecture
+- Event Bus
+- Multi-Agent System
+- Digital Twin
+
+### Deployment
+- Vercel / GitHub Pages
+
+## 10. Testing
 Quality is paramount. We implemented a rigorous QA pipeline:
 - **70%+ Unit Coverage:** The core Orchestrator and Agent logic is fully tested via `vitest`.
 - **Integration Workflow:** The `Fan Report -> EventBus -> Orchestrator -> DashboardStore` pipeline is verified with an end-to-end integration test.
