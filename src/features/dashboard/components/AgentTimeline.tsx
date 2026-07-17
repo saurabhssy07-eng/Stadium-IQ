@@ -35,9 +35,10 @@ export const AgentTimeline: React.FC = () => {
   }
 
   // Sync state with props during render instead of effect to avoid cascading renders
-  if (topIncident?.id !== activeIncidentId) {
-    setActiveIncidentId(topIncident?.id || null);
-    if (topIncident) {
+  const currentTopId = topIncident?.id ?? null;
+  if (currentTopId !== activeIncidentId) {
+    setActiveIncidentId(currentTopId);
+    if (currentTopId) {
       setAnimatedStep(0);
     } else {
       setAnimatedStep(-1);
