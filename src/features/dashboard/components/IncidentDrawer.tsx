@@ -80,11 +80,13 @@ export const IncidentDrawer: React.FC = () => {
                   <div className={styles.timelineNode}><div className={styles.timelineDot} /></div>
                   <div className={styles.timelineText}>Crowd Agent classified</div>
                 </div>
-                <div className={styles.timelineRow}>
-                  <div className={styles.timelineTime}>{new Date(incident.timestamp + 4000).toLocaleTimeString([], { hour12: false })}</div>
-                  <div className={styles.timelineNode}><div className={styles.timelineDot} /></div>
-                  <div className={styles.timelineText}>Recommendation generated</div>
-                </div>
+                {incident.reason !== 'Awaiting AI Analysis...' && (
+                  <div className={styles.timelineRow}>
+                    <div className={styles.timelineTime}>{new Date(incident.timestamp + 4000).toLocaleTimeString([], { hour12: false })}</div>
+                    <div className={styles.timelineNode}><div className={styles.timelineDot} /></div>
+                    <div className={styles.timelineText}>Recommendation generated</div>
+                  </div>
+                )}
                 {incident.status !== 'Reported' && (
                   <div className={styles.timelineRow}>
                     <div className={styles.timelineTime}>{new Date(incident.timestamp + 6000).toLocaleTimeString([], { hour12: false })}</div>
