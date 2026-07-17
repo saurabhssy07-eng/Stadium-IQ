@@ -31,7 +31,7 @@ export const IncidentDrawer: React.FC = () => {
                 {incident.severity === 'Critical' ? <ShieldAlert color="var(--color-crit)" /> : <Target color="var(--color-ai)" />}
                 Incident #{incident.id.split('_')[1]?.substring(0, 4) || '341'}
               </div>
-              <button className={styles.closeBtn} onClick={() => setSelectedIncident(null)}>
+              <button className={styles.closeBtn} aria-label="Close" onClick={() => setSelectedIncident(null)}>
                 <X size={20} />
               </button>
             </div>

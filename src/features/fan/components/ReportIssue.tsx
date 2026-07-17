@@ -5,7 +5,7 @@ import { Mic, Camera, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './ReportIssue.module.css';
 
-export const ReportIssue: React.FC = () => {
+export const ReportIssue: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const [issue, setIssue] = useState('Spill');
   const [location, setLocation] = useState('Gate B');
@@ -41,7 +41,7 @@ export const ReportIssue: React.FC = () => {
       exit={{ opacity: 0, x: -20 }}
     >
       <header className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate(-1)}>
+        <button className={styles.backBtn} aria-label="Go back" onClick={() => navigate(-1)}>
           <ArrowLeft size={20} />
         </button>
         <div className={styles.title}>Report Issue</div>
@@ -80,10 +80,10 @@ export const ReportIssue: React.FC = () => {
         </div>
 
         <div className={styles.mediaRow}>
-          <button type="button" className={styles.mediaBtn}>
+          <button type="button" className={styles.mediaBtn} aria-label="Record voice note">
             <Mic size={18} /> Voice
           </button>
-          <button type="button" className={styles.mediaBtn}>
+          <button type="button" className={styles.mediaBtn} aria-label="Take photo">
             <Camera size={18} /> Photo
           </button>
         </div>
@@ -94,4 +94,4 @@ export const ReportIssue: React.FC = () => {
       </form>
     </motion.div>
   );
-};
+});

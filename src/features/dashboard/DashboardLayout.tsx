@@ -223,7 +223,7 @@ export const DashboardLayout: React.FC = () => {
                   )}
                 </AnimatePresence>
               </div>
-              <button className={styles.navButton} onClick={() => showToast('Settings panel coming soon!')}>
+              <button className={styles.navButton} aria-label="Settings" onClick={() => showToast('Settings panel coming soon!')}>
                 <Settings size={24} />
                 <span>Settings</span>
               </button>
@@ -392,7 +392,7 @@ export const DashboardLayout: React.FC = () => {
                 <ChevronRight size={16} color="var(--color-text-secondary)" />
                 {getPanelTitle(zoomedPanelId)}
                 
-                <button className={styles.closeBtn} onClick={() => setZoomedPanelId(null)}>
+                <button className={styles.closeBtn} aria-label="Minimize panel" onClick={() => setZoomedPanelId(null)}>
                   <Minimize2 size={16} /> Minimize
                 </button>
               </div>
