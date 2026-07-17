@@ -25,8 +25,8 @@
 /* On desktop browsers, simulate a phone frame */
 @media (min-width: 420px) {
   .mobileFrame {
-    height: 85vh;
-    max-height: 850px;
+    height: 700px;
+    max-height: 90vh;
     border-radius: 40px;
     border: 8px solid #1e293b;
   }
