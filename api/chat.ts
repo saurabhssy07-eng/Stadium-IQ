@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
@@ -31,15 +31,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // 3. Initialize AI securely on the server
-    const ai = new GoogleGenAI({ apiKey });
+    const genAI = new GoogleGenerativeAI(apiKey);
     
     // 4. Generate Content
-    const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: message,
-    });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const response = await model.generateContent(message);
     
-    return res.status(200).json({ text: response.text });
+    return res.status(200).json({ text: response.response.text() });
   } catch (error: any) {
     console.error('Gemini API Error:', error);
     return res.status(500).json({ 
