@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 1. Validate Input
   const result = chatSchema.safeParse(req.body);
   if (!result.success) {
-    return res.status(400).json({ error: 'Invalid input', details: result.error.errors });
+    return res.status(400).json({ error: 'Invalid input', details: (result as any).error?.errors });
   }
 
   const { message } = result.data;
