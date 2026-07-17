@@ -94,9 +94,14 @@ The core of the product is the autonomous loop:
 - Event Bus
 - Multi-Agent System
 - Digital Twin
+- **Serverless API (Vercel Functions)**
+
+### AI Integration & Resilience
+- **Secure Serverless Backend:** Google Gemini API keys are securely stored in Vercel environment variables and processed via a `/api/chat` serverless endpoint to prevent frontend leakage.
+- **Graceful Degradation:** The AI Assistant includes a robust fallback architecture. If third-party AI services experience downtime, hit quota limits, or lack API keys, the application gracefully degrades to a simulated "Demo Mode" rather than crashing, ensuring fans always receive a response.
 
 ### Deployment
-- Vercel / GitHub Pages
+- Vercel Serverless (Production)
 
 ## 10. Testing
 Quality is paramount. We implemented a rigorous QA pipeline:
