@@ -65,6 +65,15 @@ export class Orchestrator {
     await this.delay(300);
     this.updateLastLog('Response Agent', 'Completed');
 
+    // Update the incident with the generated recommendation
+    const store = useDashboardStore.getState();
+    const incident = store.incidents.find(i => i.id === _incidentId);
+    if (incident) {
+      store.updateIncident(_incidentId, {
+        reason: `Dispatch Team Alpha to ${incident.location.zoneId} and redirect nearby crowd flow.`
+      });
+    }
+
     this.addLog('Orchestrator', 'Recommendation Published', 'Completed');
   }
 
