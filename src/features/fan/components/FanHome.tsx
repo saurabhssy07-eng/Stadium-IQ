@@ -22,18 +22,18 @@ export const FanHome: React.FC = () => {
       </header>
 
       <div className={styles.actionGrid}>
-        <div className={`${styles.actionBtn} ${styles.primary}`}>
+        <Link to="/fan/ai-conversation" className={`${styles.actionBtn} ${styles.primary}`}>
           <Navigation size={20} />
           <span className={styles.btnLabel}>Navigate</span>
-        </div>
-        <div className={styles.actionBtn}>
+        </Link>
+        <Link to="/fan/ai-conversation" className={styles.actionBtn}>
           <Coffee size={20} />
           <span className={styles.btnLabel}>Food</span>
-        </div>
-        <div className={styles.actionBtn}>
+        </Link>
+        <Link to="/fan/ai-conversation" className={styles.actionBtn}>
           <ShieldPlus size={20} />
           <span className={styles.btnLabel}>Medical</span>
-        </div>
+        </Link>
         <Link to="/fan/report" className={`${styles.actionBtn} ${styles.danger}`}>
           <TriangleAlert size={20} />
           <span className={styles.btnLabel}>Report Issue</span>
