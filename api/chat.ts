@@ -30,14 +30,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // 3. Initialize AI securely on the server
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // 4. Generate Content
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const response = await model.generateContent(message);
-    
-    return res.status(200).json({ text: response.response.text() });
+    const aiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const response = await fetch(aiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: message }] }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // If it fails, let's fetch the actual list of models they have access to so we can debug it
+      const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+      const modelsData = await modelsRes.json();
+      const modelNames = modelsData.models ? modelsData.models.map((m: any) => m.name).join(', ') : 'None';
+
+      return res.status(500).json({ 
+        error: 'API Error',
+        message: `API Error: ${JSON.stringify(data.error || data)}. Available Models for your key: ${modelNames}`
+      });
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+    return res.status(200).json({ text });
   } catch (error: any) {
     console.error('Gemini API Error:', error);
     return res.status(500).json({ 
