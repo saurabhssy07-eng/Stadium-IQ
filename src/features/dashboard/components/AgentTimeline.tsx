@@ -18,7 +18,7 @@ export const AgentTimeline: React.FC = () => {
   
   // Find top incident to determine pipeline state
   const topIncident = incidents.find(inc => 
-    inc.status !== 'Resolved' && (inc.severity === 'Critical' || inc.severity === 'High')
+    inc.status !== 'Resolved'
   );
 
   const [animatedStep, setAnimatedStep] = useState(-1);
