@@ -9,7 +9,7 @@ describe('Orchestrator', () => {
 
   beforeEach(() => {
     stadiumEventBus.clear();
-    useDashboardStore.setState({ incidents: [], timelineLogs: [] });
+    useDashboardStore.setState({ incidents: [] });
     // Instantiate a fresh orchestrator for each test so it subscribes to the fresh event bus
     localOrchestrator = new Orchestrator();
   });

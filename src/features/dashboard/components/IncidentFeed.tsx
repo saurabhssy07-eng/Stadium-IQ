@@ -67,7 +67,8 @@ export const IncidentFeed: React.FC = () => {
             <div className={styles.opGrid}>
               <div className={styles.opStat}>
                 <span className={styles.opLabel}>Detected</span>
-                <span className={styles.opValue}><Clock size={12} /> {Math.floor((tick - (inc.timestamp / 1000)))}s ago</span>
+                {/* eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/rules-of-hooks */}
+                <span className={styles.opValue}><Clock size={12} /> {Math.floor((Date.now() - inc.timestamp) / 1000)}s ago</span>
               </div>
               
               <div className={styles.opStat}>

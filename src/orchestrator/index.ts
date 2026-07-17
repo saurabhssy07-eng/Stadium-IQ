@@ -19,7 +19,7 @@ export class Orchestrator {
     const incident: Incident = {
       id: `inc_${Date.now()}`,
       timestamp: Date.now(),
-      rawText: event.payload.message || 'System Anomaly Detected',
+      rawText: (event.payload as any)?.message || 'System Anomaly Detected',
       language: 'en',
       location: event.location,
       type: event.type,

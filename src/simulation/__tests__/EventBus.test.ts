@@ -44,7 +44,7 @@ describe('EventBus', () => {
     stadiumEventBus.publish({
       id: 'test_2',
       timestamp: Date.now(),
-      source: 'USER_REPORT',
+      source: 'FAN_APP',
       type: 'SECURITY',
       priority: 'Medium',
       location: { x: 30, y: 40, zoneId: 'Zone B' },

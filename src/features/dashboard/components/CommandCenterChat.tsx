@@ -46,9 +46,6 @@ export const CommandCenterChat: React.FC = () => {
     return unsub;
   }, []);
 
-  const addMessage = (sender: 'AI' | 'Operator', text: string) => {
-    setMessages(prev => [...prev, { sender, text, id: `${Date.now()}-${Math.random()}` }]);
-  };
 
   useEffect(() => {
     if (scrollRef.current) {

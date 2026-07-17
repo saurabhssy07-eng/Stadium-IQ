@@ -21,7 +21,7 @@ Object.defineProperty(window, 'matchMedia', {
 
 describe('AiConversation', () => {
   beforeEach(() => {
-    global.fetch = vi.fn();
+    globalThis.fetch = vi.fn();
   });
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe('AiConversation', () => {
   });
 
   it('renders correctly and handles successful API response', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       json: async () => ({ text: 'Real API Response' })
     });
@@ -58,7 +58,7 @@ describe('AiConversation', () => {
   });
 
   it('handles API failure and switches to Demo Mode fallback', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+    (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: false,
       status: 503
     });
