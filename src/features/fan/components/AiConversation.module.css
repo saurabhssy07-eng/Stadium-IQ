@@ -33,6 +33,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  overflow-y: auto;
+  padding-bottom: 2rem;
 }
 
 .messageRow {
@@ -191,6 +193,8 @@
   border: 1px dashed rgba(234, 179, 8, 0.5);
   color: #eab308 !important;
   font-style: italic;
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .demoBadge {
