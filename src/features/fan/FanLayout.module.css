@@ -11,6 +11,7 @@
   width: 100%;
   max-width: 400px;
   height: 100%;
+  max-height: 100vh;
   background: #020617; /* Solid dark background for the app */
   border: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
@@ -18,12 +19,14 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  box-sizing: border-box;
 }
 
 /* On desktop browsers, simulate a phone frame */
 @media (min-width: 420px) {
   .mobileFrame {
     height: 85vh;
+    max-height: 850px;
     border-radius: 40px;
     border: 8px solid #1e293b;
   }
