@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Activity, Map, LayoutDashboard, Settings, Brain, Clock, ShieldAlert, Info, Play, Maximize2, Minimize2, ChevronRight } from 'lucide-react';
+import { Activity, Map, LayoutDashboard, Settings, Brain, Clock, ShieldAlert, Info, Play, Maximize2, Minimize2, ChevronRight, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { StadiumMap } from './components/StadiumMap';
 import { AgentTimeline } from './components/AgentTimeline';
@@ -191,6 +191,10 @@ export const DashboardLayout: React.FC = () => {
               <button className={styles.navButton} aria-label="Analytics" onClick={() => setZoomedPanelId('tabs')}>
                 <Activity size={24} />
                 <span>Analytics</span>
+              </button>
+              <button className={styles.navButton} aria-label="Fan App" onClick={() => window.open('/fan', '_blank')}>
+                <Smartphone size={24} />
+                <span>Fan App</span>
               </button>
               <div style={{ flex: 1 }}></div>
               <div style={{ position: 'relative' }}>
