@@ -22,18 +22,18 @@ export const FanHome: React.FC = () => {
       </header>
 
       <div className={styles.actionGrid}>
-        <Link to="/fan/navigate" className={`${styles.actionBtn} ${styles.primary}`}>
+        <div className={`${styles.actionBtn} ${styles.primary}`}>
           <Navigation size={24} />
           <span className={styles.btnLabel}>Navigate</span>
-        </Link>
-        <Link to="/fan/food" className={styles.actionBtn}>
+        </div>
+        <div className={styles.actionBtn}>
           <Coffee size={24} />
           <span className={styles.btnLabel}>Food</span>
-        </Link>
-        <Link to="/fan/medical" className={styles.actionBtn}>
+        </div>
+        <div className={styles.actionBtn}>
           <ShieldPlus size={24} />
           <span className={styles.btnLabel}>Medical</span>
-        </Link>
+        </div>
         <Link to="/fan/report" className={`${styles.actionBtn} ${styles.danger}`}>
           <TriangleAlert size={24} />
           <span className={styles.btnLabel}>Report Issue</span>
@@ -47,9 +47,9 @@ export const FanHome: React.FC = () => {
         <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
           "What can I help you with?"
         </p>
-        <button className={styles.micBtn} aria-label="Start voice assistant">
+        <Link to="/fan/ai-conversation" className={styles.micBtn} aria-label="Start voice assistant">
           <Mic size={28} />
-        </button>
+        </Link>
       </div>
     </motion.div>
   );

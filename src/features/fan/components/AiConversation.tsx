@@ -55,7 +55,7 @@ export const AiConversation: React.FC = React.memo(() => {
       exit={{ opacity: 0, x: -20 }}
     >
       <header className={styles.header}>
-        <button className={styles.backBtn} aria-label="Go back" onClick={() => navigate('/')}>
+        <button className={styles.backBtn} aria-label="Go back" onClick={() => navigate('/fan')}>
           <ArrowLeft size={20} />
         </button>
         <div className={styles.title}>
