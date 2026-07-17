@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('Gemini API Error:', error);
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      message: 'Failed to communicate with AI provider.'
+      message: `AI provider error: ${error.message || 'Unknown error'}`
     });
   }
 }

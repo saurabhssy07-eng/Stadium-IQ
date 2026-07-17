@@ -33,8 +33,9 @@ export const AiConversation: React.FC = React.memo(() => {
         const data = await response.json();
         setMessages(prev => [...prev, { role: 'ai', content: data.text || 'Message received by Command Center.' }]);
       } else {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown Server Error' }));
         setIsDemoMode(true);
-        setMessages(prev => [...prev, { role: 'system', content: 'Demo Mode Activated: Simulating AI Response (API Key not configured on server).' }]);
+        setMessages(prev => [...prev, { role: 'system', content: `Demo Mode Activated: ${errorData.message || 'API Key not configured on server'}` }]);
         await new Promise(r => setTimeout(r, 1500));
         setMessages(prev => [...prev, { role: 'ai', content: `[Simulated Response] Report received for: "${userMessage}". A response team has been notified.` }]);
       }
