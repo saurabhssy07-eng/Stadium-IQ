@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Activity, Map, LayoutDashboard, Settings, Brain, Clock, ShieldAlert, Info, Play, Maximize2, Minimize2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { StadiumMap } from './components/StadiumMap';
@@ -15,7 +15,7 @@ import { IncidentDrawer } from './components/IncidentDrawer';
 import styles from './DashboardLayout.module.css';
 
 // Animated Number Component
-const AnimatedNumber = ({ value }: { value: number }) => {
+const AnimatedNumber = React.memo(({ value }: { value: number }) => {
   const [displayValue, setDisplayValue] = useState(value - 400); // Start slightly lower for counting effect
   
   useEffect(() => {
@@ -43,7 +43,7 @@ const AnimatedNumber = ({ value }: { value: number }) => {
   }, [value]);
 
   return <>{displayValue.toLocaleString()}</>;
-};
+});
 
 // Reusable Panel Component wrapped in framer-motion
 interface PanelProps {
@@ -56,10 +56,7 @@ interface PanelProps {
   isZoomed: boolean;
 }
 
-const Panel: React.FC<PanelProps> = ({ id, title, icon, className = '', children, onZoom, isZoomed }) => {
-  // If this panel is the currently zoomed one, don't render its contents in the grid (framer-motion handles moving it)
-  // Actually, we render it normally, but framer-motion will move it to the overlay if layoutId is active elsewhere?
-  // It's better to just hide it in the grid if it's zoomed.
+const Panel: React.FC<PanelProps> = React.memo(({ id, title, icon, className = '', children, onZoom, isZoomed }) => {
   if (isZoomed) {
     return <div className={className} style={{ opacity: 0 }} />;
   }
@@ -78,7 +75,7 @@ const Panel: React.FC<PanelProps> = ({ id, title, icon, className = '', children
       </div>
     </motion.div>
   );
-};
+});
 
 export const DashboardLayout: React.FC = () => {
   const incidents = useDashboardStore(state => state.incidents);
@@ -121,12 +118,12 @@ export const DashboardLayout: React.FC = () => {
   };
 
   // Setup Tabs
-  const tabs = [
+  const tabs = useMemo(() => [
     { id: 'analytics', label: 'Analytics', content: <AnalyticsWidget /> },
     { id: 'crowd', label: 'Crowd Flow', content: <CrowdFlowWidget /> },
     { id: 'volunteers', label: 'Volunteers', content: <VolunteersWidget /> },
     { id: 'risk', label: 'Predictive Risk', content: <RiskPanel /> }
-  ];
+  ], []);
 
   // Helper to get panel content for Zoom Overlay
   const getPanelContent = (id: string) => {
@@ -153,9 +150,9 @@ export const DashboardLayout: React.FC = () => {
     }
   };
 
-  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
-  const criticalCount = activeIncidents.filter(i => i.severity === 'Critical').length;
-  const highCount = activeIncidents.filter(i => i.severity === 'High').length;
+  const activeIncidents = useMemo(() => incidents.filter(i => i.status !== 'Resolved'), [incidents]);
+  const criticalCount = useMemo(() => activeIncidents.filter(i => i.severity === 'Critical').length, [activeIncidents]);
+  const highCount = useMemo(() => activeIncidents.filter(i => i.severity === 'High').length, [activeIncidents]);
 
   const IncidentTitle = (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>

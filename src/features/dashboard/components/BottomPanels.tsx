@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, ShieldAlert, Video, Droplets, CheckCircle, Plus } from 'lucide-react';
+import { ShieldAlert, Video, Droplets, CheckCircle, Plus } from 'lucide-react';
 import styles from './BottomPanels.module.css';
 
 export const AnalyticsWidget: React.FC = () => {

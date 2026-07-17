@@ -35,9 +35,7 @@ export class Orchestrator {
   }
   
   // 2. The Multi-Agent Timeline Execution
-  private async simulateAgentPipeline(event: StadiumEvent, incidentId: string) {
-    const start = Date.now();
-    
+  private async simulateAgentPipeline(_event: StadiumEvent, _incidentId: string) {
     this.addLog('Ingestion', 'Report Received', 'Pending');
     await this.delay(200);
     this.updateLastLog('Ingestion', 'Completed');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDashboardStore } from '../DashboardStore';
 import { CheckCircle2, Circle, ArrowDown, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styles from './AgentTimeline.module.css';
 
 const PIPELINE_STEPS = [
@@ -34,17 +34,19 @@ export const AgentTimeline: React.FC = () => {
     }
   }
 
+  // Sync state with props during render instead of effect to avoid cascading renders
+  if (topIncident?.id !== activeIncidentId) {
+    setActiveIncidentId(topIncident?.id || null);
+    if (topIncident) {
+      setAnimatedStep(0);
+    } else {
+      setAnimatedStep(-1);
+    }
+  }
+
   // Effect to handle animation sequencing
   useEffect(() => {
-    if (topIncident?.id !== activeIncidentId) {
-      // New incident detected, start animation from 0
-      setActiveIncidentId(topIncident?.id || null);
-      if (topIncident) {
-        setAnimatedStep(0); // Start at Receive
-      } else {
-        setAnimatedStep(-1); // Reset
-      }
-    } else if (topIncident && animatedStep < targetStep) {
+    if (topIncident && animatedStep < targetStep) {
       // Progress the animation
       const timer = setTimeout(() => {
         setAnimatedStep(prev => Math.min(prev + 1, targetStep));

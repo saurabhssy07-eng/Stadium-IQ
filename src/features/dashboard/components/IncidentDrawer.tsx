@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Target, Users, Zap, CheckCircle, ShieldAlert } from 'lucide-react';
+import { X, MapPin, Target, Zap, CheckCircle, ShieldAlert } from 'lucide-react';
 import { useDashboardStore } from '../DashboardStore';
 import { stadiumEventBus } from '../../../simulation/EventBus';
 import styles from './IncidentDrawer.module.css';

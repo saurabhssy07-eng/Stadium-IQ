@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Navigation, Coffee, ShieldPlus, Activity, TriangleAlert, Mic, Bot } from 'lucide-react';
+import { Navigation, Coffee, ShieldPlus, TriangleAlert, Mic, Bot } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './FanHome.module.css';
 

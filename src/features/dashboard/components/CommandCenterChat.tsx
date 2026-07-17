@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Terminal, X, Minimize2, Maximize2 } from 'lucide-react';
+import { Terminal, Minimize2, Maximize2 } from 'lucide-react';
 import styles from './CommandCenterChat.module.css';
 import { useDashboardStore } from '../DashboardStore';
 
@@ -7,6 +7,10 @@ export const CommandCenterChat: React.FC = () => {
   const [messages, setMessages] = useState<{ sender: 'AI' | 'Operator'; text: string; id: string }[]>([]);
   const [isMinimized, setIsMinimized] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const addMessage = (sender: 'AI' | 'Operator', text: string) => {
+    setMessages(prev => [...prev, { sender, text, id: `${Date.now()}-${Math.random()}` }]);
+  };
 
   // Subscribe to incidents to auto-generate chat logs
   useEffect(() => {

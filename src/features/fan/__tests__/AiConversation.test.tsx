@@ -1,41 +1,83 @@
 // @vitest-environment jsdom
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { AiConversation } from '../components/AiConversation';
 
 // Mock matchMedia to fix framer-motion issues in jsdom
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: (query: string) => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: () => {}, // Deprecated
-    removeListener: () => {}, // Deprecated
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-  }),
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
 });
 
 describe('AiConversation', () => {
-  it('renders correctly and accepts user input', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    cleanup();
+  });
+
+  it('renders correctly and handles successful API response', async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: true,
+      json: async () => ({ text: 'Real API Response' })
+    });
+
     render(
       <BrowserRouter>
         <AiConversation />
       </BrowserRouter>
     );
     
-    // Should render initial AI message
     expect(screen.getByText(/Hello! I am your Smart Stadium Assistant/i)).toBeTruthy();
 
-    // Find input and submit button
     const input = screen.getByPlaceholderText('Describe your issue...');
+    const submitBtn = screen.getByRole('button', { name: /Send message/i });
     expect(input).toBeTruthy();
     
-    // Type in input
     fireEvent.change(input, { target: { value: 'Test issue' } });
-    expect(input).toHaveValue('Test issue');
+    fireEvent.click(submitBtn);
+
+    expect(screen.getByText('Test issue')).toBeTruthy();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Real API Response')).toBeTruthy();
+    });
+  });
+
+  it('handles API failure and switches to Demo Mode fallback', async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: false,
+      status: 503
+    });
+
+    render(
+      <BrowserRouter>
+        <AiConversation />
+      </BrowserRouter>
+    );
+
+    const input = screen.getByPlaceholderText('Describe your issue...');
+    const submitBtn = screen.getByRole('button', { name: /Send message/i });
+    
+    fireEvent.change(input, { target: { value: 'Broken issue' } });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Demo Mode Activated/i)).toBeTruthy();
+      expect(screen.getByText(/\[Simulated Response\]/i)).toBeTruthy();
+    }, { timeout: 2500 });
   });
 });

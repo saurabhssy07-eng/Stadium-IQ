@@ -4,7 +4,8 @@ import { useDashboardStore } from '../features/dashboard/DashboardStore';
 
 export class DigitalTwin {
   private state: StadiumState;
-  private simulationInterval: ReturnType<typeof setInterval> | null = null;
+  private simulationTimeout: ReturnType<typeof setTimeout> | null = null;
+  private isRunning = false;
   private tickRateMs = 3000; // Fast for demo purposes
 
   constructor() {
@@ -35,19 +36,24 @@ export class DigitalTwin {
   }
 
   public startSimulation() {
-    if (this.simulationInterval) return;
+    if (this.isRunning) return;
+    this.isRunning = true;
 
-    this.simulationInterval = setInterval(() => {
+    const loop = () => {
+      if (!this.isRunning) return;
       this.tick();
-    }, this.tickRateMs);
+      this.simulationTimeout = setTimeout(loop, this.tickRateMs);
+    };
     
+    loop();
     console.log("Digital Stadium Twin Engine Started.");
   }
 
   public stopSimulation() {
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-      this.simulationInterval = null;
+    this.isRunning = false;
+    if (this.simulationTimeout) {
+      clearTimeout(this.simulationTimeout);
+      this.simulationTimeout = null;
     }
   }
 

@@ -12,7 +12,7 @@ export interface StadiumEvent {
   type: string;
   priority: 'Low' | 'Medium' | 'High' | 'Critical';
   location: Location;
-  payload: any;
+  payload?: unknown;
   status: 'New' | 'Processing' | 'Processed' | 'Failed';
 }
 
