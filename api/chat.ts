@@ -19,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const { message } = result.data;
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
 
   // 2. Check for API Key presence (Security Check)
   if (!apiKey || apiKey === 'dummy_key') {
