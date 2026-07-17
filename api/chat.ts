@@ -19,7 +19,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const { message } = result.data;
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  let apiKey = process.env.GEMINI_API_KEY?.trim() || '';
+  
+  // Remove any accidental quotes the user might have pasted
+  apiKey = apiKey.replace(/['"]/g, '');
 
   // 2. Check for API Key presence (Security Check)
   if (!apiKey || apiKey === 'dummy_key') {
@@ -30,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const aiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const aiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
     const response = await fetch(aiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
