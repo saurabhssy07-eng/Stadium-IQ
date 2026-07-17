@@ -194,6 +194,8 @@
   color: #eab308 !important;
   font-style: italic;
   word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   white-space: pre-wrap;
 }
 
