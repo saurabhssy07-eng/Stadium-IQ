@@ -10,9 +10,9 @@ export const FanLayout: React.FC = () => {
     <div className={styles.appContainer}>
       <div className={styles.mobileFrame}>
         <Routes>
-          <Route path="/" element={<FanHome />} />
-          <Route path="/report" element={<ReportIssue />} />
-          <Route path="/ai-conversation" element={<AiConversation />} />
+          <Route path="" element={<FanHome />} />
+          <Route path="report" element={<ReportIssue />} />
+          <Route path="ai-conversation" element={<AiConversation />} />
         </Routes>
       </div>
     </div>
