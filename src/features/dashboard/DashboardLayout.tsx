@@ -192,10 +192,10 @@ export const DashboardLayout: React.FC = () => {
                 <Activity size={24} />
                 <span>Analytics</span>
               </button>
-              <button className={styles.navButton} aria-label="Fan App" onClick={() => window.open('/fan', '_blank')}>
+              <a href="/fan" target="_blank" rel="noopener noreferrer" className={styles.navButton} aria-label="Fan App" style={{ textDecoration: 'none' }}>
                 <Smartphone size={24} />
                 <span>Fan App</span>
-              </button>
+              </a>
               <div style={{ flex: 1 }}></div>
               <div style={{ position: 'relative' }}>
                 <button 
