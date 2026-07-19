@@ -7,7 +7,7 @@ import styles from './AiConversation.module.css';
 export const AiConversation: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<{role: 'user' | 'ai' | 'system', content: string}[]>([
-    { role: 'ai', content: 'Hello! I am your Smart Stadium Assistant. Please report any issues or ask for directions.' }
+    { role: 'ai', content: 'Hello! I am your Smart Stadium Assistant. I can help with general stadium info and directions.' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -61,6 +61,9 @@ export const AiConversation: React.FC = React.memo(() => {
         </button>
         <div className={styles.title}>
           AI Assistant {isDemoMode && <span className={styles.demoBadge}>Demo Mode</span>}
+          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 'normal', marginTop: '2px' }}>
+            General info only. For emergencies, please use the Report tool.
+          </div>
         </div>
       </header>
 

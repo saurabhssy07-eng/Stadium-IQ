@@ -80,10 +80,20 @@ export const ReportIssue: React.FC = React.memo(() => {
         </div>
 
         <div className={styles.mediaRow}>
-          <button type="button" className={styles.mediaBtn} aria-label="Record voice note">
+          <button 
+            type="button" 
+            className={styles.mediaBtn} 
+            aria-label="Record voice note"
+            onClick={() => alert('Hardware integration simulated for demo purposes.')}
+          >
             <Mic size={18} /> Voice
           </button>
-          <button type="button" className={styles.mediaBtn} aria-label="Take photo">
+          <button 
+            type="button" 
+            className={styles.mediaBtn} 
+            aria-label="Take photo"
+            onClick={() => alert('Hardware integration simulated for demo purposes.')}
+          >
             <Camera size={18} /> Photo
           </button>
         </div>

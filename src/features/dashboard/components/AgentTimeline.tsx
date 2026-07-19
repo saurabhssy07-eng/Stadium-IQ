@@ -5,63 +5,44 @@ import { motion } from 'framer-motion';
 import styles from './AgentTimeline.module.css';
 
 const PIPELINE_STEPS = [
-  { id: 'receive', label: 'Receive' },
-  { id: 'translate', label: 'Translate' },
-  { id: 'classify', label: 'Classify' },
-  { id: 'predict', label: 'Predict' },
-  { id: 'recommend', label: 'Recommend' },
-  { id: 'dispatch', label: 'Dispatch' },
+  { id: 'receive', label: 'Receive', agents: ['Ingestion'] },
+  { id: 'translate', label: 'Translate', agents: ['Communication Agent'] },
+  { id: 'classify', label: 'Classify', agents: ['NLP Engine'] },
+  { id: 'predict', label: 'Predict', agents: ['Simulation Twin', 'Pathfinding'] },
+  { id: 'recommend', label: 'Recommend', agents: ['Response Agent', 'Orchestrator'] },
+  { id: 'dispatch', label: 'Dispatch', agents: ['Dispatch Complete'] }, // "Dispatch Complete" is used in DashboardStore
 ];
 
 export const AgentTimeline: React.FC = () => {
   const incidents = useDashboardStore(state => state.incidents);
+  const timelineLogs = useDashboardStore(state => state.executionTimeline);
   
   // Find top incident to determine pipeline state
-  const topIncident = incidents.find(inc => 
-    inc.status !== 'Resolved'
-  );
-
-  const [animatedStep, setAnimatedStep] = useState(-1);
-  const [activeIncidentId, setActiveIncidentId] = useState<string | null>(null);
-
-  // Target step based on incident state
-  let targetStep = -1; // Default: Waiting
-  if (topIncident) {
-    if (topIncident.status === 'Assigned' || topIncident.status === 'Responding') {
-      targetStep = 5; // Dispatch complete
-    } else {
-      targetStep = 4; // Up to Recommend complete
-    }
-  }
-
-  // Sync state with props during render instead of effect to avoid cascading renders
-  const currentTopId = topIncident?.id ?? null;
-  if (currentTopId !== activeIncidentId) {
-    setActiveIncidentId(currentTopId);
-    if (currentTopId) {
-      setAnimatedStep(0);
-    } else {
-      setAnimatedStep(-1);
-    }
-  }
-
-  // Effect to handle animation sequencing
-  useEffect(() => {
-    if (topIncident && animatedStep < targetStep) {
-      // Progress the animation
-      const timer = setTimeout(() => {
-        setAnimatedStep(prev => Math.min(prev + 1, targetStep));
-      }, 600); // 600ms delay between steps
-      return () => clearTimeout(timer);
-    }
-  }, [topIncident, activeIncidentId, targetStep, animatedStep]);
+  const topIncident = incidents.find(inc => inc.status !== 'Resolved');
 
   return (
     <div className={styles.pipelineContainer}>
       {PIPELINE_STEPS.map((step, index) => {
-        const isCompleted = index <= animatedStep;
-        const isCurrent = index === animatedStep + 1 && animatedStep !== 5 && animatedStep !== -1;
-        const isWaitingFirst = animatedStep === -1 && index === 0;
+        // Derive state purely from logs
+        let isCompleted = false;
+        let isCurrent = false;
+
+        if (topIncident) {
+           if (index === 5 && (topIncident.status === 'Assigned' || topIncident.status === 'Responding')) {
+             isCompleted = true;
+           } else {
+             // Check if any agent mapped to this step is Completed
+             isCompleted = timelineLogs.some(log => step.agents.includes(log.agentName) && log.status === 'Completed') ||
+                           timelineLogs.some(log => step.agents.includes(log.action) && log.status === 'Completed');
+             
+             // If not completed, check if it's currently pending
+             if (!isCompleted) {
+                isCurrent = timelineLogs.some(log => step.agents.includes(log.agentName) && log.status === 'Pending');
+             }
+           }
+        }
+
+        const isWaitingFirst = !topIncident && index === 0;
 
         return (
           <React.Fragment key={step.id}>

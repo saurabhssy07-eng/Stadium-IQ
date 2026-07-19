@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldAlert, Video, Droplets, CheckCircle, Plus } from 'lucide-react';
 import styles from './BottomPanels.module.css';
-
+import { useDashboardStore } from '../DashboardStore';
 export const AnalyticsWidget: React.FC = () => {
   return (
     <div className={styles.kpiContainer}>
@@ -94,33 +94,66 @@ export const VolunteersWidget: React.FC = () => {
 };
 
 export const RecentEventsWidget: React.FC<{ isZoomed?: boolean }> = ({ isZoomed = false }) => {
-  const [logs, setLogs] = useState([
-    { type: 'Camera', time: '14:22:10', msg: 'Camera 7 rebooted', icon: Video },
-    { type: 'Cleaning', time: '14:21:45', msg: 'Spill cleaned at Sec C', icon: Droplets },
-    { type: 'Resolved', time: '14:20:12', msg: 'Medical incident resolved', icon: CheckCircle }
-  ]);
+  const timelineLogs = useDashboardStore(state => state.executionTimeline);
+  const incidents = useDashboardStore(state => state.incidents);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const msgs = [
-        { type: 'Medical', msg: 'Medical team dispatched', icon: Plus },
-        { type: 'Emergency', msg: 'Zone B congestion', icon: ShieldAlert },
-        { type: 'Camera', msg: 'Feed reconnected', icon: Video },
-        { type: 'Cleaning', msg: 'Janitorial staff routed', icon: Droplets },
-        { type: 'Resolved', msg: 'Incident closed', icon: CheckCircle },
-        { type: 'AI', msg: 'Model retrained context', icon: ShieldAlert }
-      ];
-      const now = new Date();
-      const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-      
-      setLogs(prev => {
-        const selected = msgs[Math.floor(Math.random() * msgs.length)];
-        const newLogs = [{ time: timeStr, msg: selected.msg, type: selected.type, icon: selected.icon }, ...prev];
-        return newLogs.slice(0, 36); // Keep up to 36 logs for zoom mode
-      });
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  // Derive logs from real data
+  const logs = React.useMemo(() => {
+    const events: {id: string, type: string, timeStr: string, timestamp: number, msg: string, icon: any}[] = [];
+    
+    // Add real orchestrator timeline logs
+    timelineLogs.forEach(log => {
+       if (log.status === 'Completed' || log.status === 'Failed') {
+          let icon = ShieldAlert;
+          let type = 'System';
+          if (log.agentName === 'Ingestion' || log.agentName === 'Orchestrator') { icon = CheckCircle; type = 'AI'; }
+          else if (log.action.includes('Dispatch')) { icon = Plus; type = 'Medical'; }
+          else { icon = ShieldAlert; type = 'Analysis'; }
+
+          const date = new Date(log.timestamp);
+          const timeStr = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+
+          events.push({
+            id: `log_${log.timestamp}_${log.agentName}`,
+            type,
+            timeStr,
+            timestamp: log.timestamp,
+            msg: `[${log.agentName}] ${log.action}`,
+            icon
+          });
+       }
+    });
+
+    // Add real incident reports
+    incidents.forEach(inc => {
+       const date = new Date(inc.timestamp);
+       const timeStr = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+       
+       events.push({
+          id: `inc_${inc.id}_new`,
+          type: 'Emergency',
+          timeStr,
+          timestamp: inc.timestamp,
+          msg: `New Incident: ${inc.type} at ${inc.location.zoneId}`,
+          icon: ShieldAlert
+       });
+
+       if (inc.status === 'Resolved') {
+          events.push({
+            id: `inc_${inc.id}_res`,
+            type: 'Resolved',
+            timeStr,
+            timestamp: inc.timestamp + 1000,
+            msg: `Incident Resolved: ${inc.type}`,
+            icon: CheckCircle
+         });
+       }
+    });
+
+    // Sort newest first
+    events.sort((a, b) => b.timestamp - a.timestamp);
+    return events;
+  }, [timelineLogs, incidents]);
 
   return (
     <div className={styles.widgetContainer}>
@@ -138,21 +171,26 @@ export const RecentEventsWidget: React.FC<{ isZoomed?: boolean }> = ({ isZoomed 
         {/* Connecting horizontal line in the background (only when not zoomed) */}
         {!isZoomed && <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', background: 'rgba(255,255,255,0.1)', zIndex: 0 }} />}
         
+        {logs.length === 0 && (
+          <div style={{ padding: '1rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+            No recent events in the system.
+          </div>
+        )}
+
         {logs.slice(0, isZoomed ? 36 : 6).map((log, i) => {
           let colorClass = styles.eventNormal;
           if (log.type === 'Resolved') colorClass = styles.eventSuccess;
           else if (log.type === 'AI') colorClass = styles.eventAI;
-          else if (log.type === 'Cleaning') colorClass = styles.eventWarning;
-          else if (log.type === 'Medical') colorClass = styles.eventInfo;
           else if (log.type === 'Emergency') colorClass = styles.eventDanger;
+          else if (log.type === 'Medical') colorClass = styles.eventInfo;
 
           return (
-            <div key={`${log.time}-${i}`} className={styles.logEntry} style={{ position: 'relative', zIndex: 1 }}>
+            <div key={log.id} className={styles.logEntry} style={{ position: 'relative', zIndex: 1 }}>
               <div className={`${styles.logDot} ${colorClass}`}></div>
               <div className={styles.logContent}>
                 <div className={styles.logHeader}>
                   <span className={styles.logType}>{log.type}</span>
-                  <span className={styles.logTime}>{log.time}</span>
+                  <span className={styles.logTime}>{log.timeStr}</span>
                 </div>
                 <div className={styles.logMsg}>{log.msg}</div>
               </div>
