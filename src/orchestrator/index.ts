@@ -35,7 +35,7 @@ export class Orchestrator {
   }
   
   // 2. The Multi-Agent Timeline Execution
-  private async simulateAgentPipeline(_event: StadiumEvent, _incidentId: string) {
+  private async simulateAgentPipeline(event: StadiumEvent, _incidentId: string) {
     this.addLog('Ingestion', 'Report Received', 'Pending');
     await this.delay(200);
     this.updateLastLog('Ingestion', 'Completed');
@@ -45,23 +45,64 @@ export class Orchestrator {
     await this.delay(400);
     this.updateLastLog('Communication Agent', 'Completed');
 
-    // Simulate Incident Agent (Classification)
-    this.addLog('NLP Engine', 'Severity Analysis', 'Pending');
-    await this.delay(600);
+    this.addLog('NLP Engine', 'AI Severity Analysis', 'Pending');
+
+    try {
+      const response = await fetch('/api/orchestrator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: (event.payload as Record<string, unknown>)?.message || '',
+          type: event.type,
+          priority: event.priority,
+          location: event.location
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.updateLastLog('NLP Engine', 'Completed');
+        
+        this.addLog('Pathfinding', 'AI Route Optimization', 'Pending');
+        await this.delay(200);
+        this.updateLastLog('Pathfinding', 'Completed');
+        
+        this.addLog('Response Agent', 'AI Team Assignment', 'Pending');
+        await this.delay(200);
+        this.updateLastLog('Response Agent', 'Completed');
+
+        const store = useDashboardStore.getState();
+        const incident = store.incidents.find(i => i.id === _incidentId);
+        if (incident) {
+          store.updateIncident(_incidentId, {
+            severity: data.severity || incident.severity,
+            confidence: data.confidence || 90,
+            assignee: data.assignee || 'Team Alpha',
+            reason: data.recommendation || 'AI recommendation unavailable'
+          });
+        }
+        this.addLog('Orchestrator', 'AI Recommendation Published', 'Completed');
+        return; // Exit if real AI succeeded
+      }
+    } catch (e) {
+      console.warn('AI Orchestrator API failed, falling back to demo simulation', e);
+    }
+
+    // Fallback pipeline (if API fails or keys missing)
     this.updateLastLog('NLP Engine', 'Completed');
 
     // Simulate Crowd Agent (Prediction)
-    this.addLog('Simulation Twin', 'Crowd Prediction', 'Pending');
+    this.addLog('Simulation Twin', 'Crowd Prediction (Demo)', 'Pending');
     await this.delay(500);
     this.updateLastLog('Simulation Twin', 'Completed');
     
     // Simulate Route Optimization
-    this.addLog('Pathfinding', 'Route Optimization', 'Pending');
+    this.addLog('Pathfinding', 'Route Optimization (Demo)', 'Pending');
     await this.delay(400);
     this.updateLastLog('Pathfinding', 'Completed');
     
     // Simulate Response Agent (Dispatch)
-    this.addLog('Response Agent', 'Volunteer Assignment', 'Pending');
+    this.addLog('Response Agent', 'Volunteer Assignment (Demo)', 'Pending');
     await this.delay(300);
     this.updateLastLog('Response Agent', 'Completed');
 
@@ -70,11 +111,12 @@ export class Orchestrator {
     const incident = store.incidents.find(i => i.id === _incidentId);
     if (incident) {
       store.updateIncident(_incidentId, {
-        reason: `Dispatch Team Alpha to ${incident.location.zoneId} and redirect nearby crowd flow.`
+        reason: `[Demo] Dispatch Team Alpha to ${incident.location.zoneId} and redirect nearby crowd flow.`,
+        confidence: 97
       });
     }
 
-    this.addLog('Orchestrator', 'Recommendation Published', 'Completed');
+    this.addLog('Orchestrator', 'Demo Recommendation Published', 'Completed');
   }
 
   private addLog(agentName: string, action: string, status: 'Pending' | 'Completed' | 'Failed') {

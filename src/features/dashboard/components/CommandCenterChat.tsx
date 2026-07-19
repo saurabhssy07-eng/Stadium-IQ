@@ -55,7 +55,7 @@ export const CommandCenterChat: React.FC = () => {
 
   return (
     <div className={`${styles.chatContainer} ${isMinimized ? styles.minimized : ''}`}>
-      <div className={styles.chatHeader} onClick={() => setIsMinimized(!isMinimized)}>
+      <button type="button" className={styles.chatHeader} onClick={() => setIsMinimized(!isMinimized)}>
         <div className={styles.headerTitle}>
           <Terminal size={14} />
           <span>CMD CENTER</span>
@@ -63,7 +63,7 @@ export const CommandCenterChat: React.FC = () => {
         <div className={styles.headerActions}>
           {isMinimized ? <Maximize2 size={12} /> : <Minimize2 size={12} />}
         </div>
-      </div>
+      </button>
       
       {!isMinimized && (
         <div className={styles.chatBody} ref={scrollRef}>

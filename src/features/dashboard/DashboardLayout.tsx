@@ -79,10 +79,10 @@ const Panel: React.FC<PanelProps> = React.memo(({ id, title, icon, className = '
       layoutId={`panel-${id}`}
       className={`glass-panel ${styles.panel} ${className}`}
     >
-      <div className={styles.panelHeader} onClick={() => onZoom(id)}>
+      <button className={styles.panelHeader} onClick={() => onZoom(id)} type="button">
         <div className={styles.headerTitle}>{icon} {title}</div>
         <Maximize2 size={16} />
-      </div>
+      </button>
       <div className={styles.panelContent}>
         {children}
       </div>

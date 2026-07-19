@@ -45,10 +45,12 @@ export const IncidentFeed: React.FC = () => {
         const cardClass = isActionable ? styles.cardActive : styles.cardDim;
 
         return (
-          <div 
+          <button 
             key={inc.id} 
             className={`${styles.incidentCard} ${cardClass} ${styles[inc.severity.toLowerCase()]}`}
             onClick={() => setSelectedIncident(inc.id)}
+            type="button"
+            style={{ textAlign: 'left', background: 'none', border: 'none', padding: 0, width: '100%', font: 'inherit', color: 'inherit', cursor: 'pointer' }}
           >
             
             <div className={styles.opHeader}>
@@ -83,7 +85,9 @@ export const IncidentFeed: React.FC = () => {
               </div>
               
               <div className={styles.opAction}>
-                <button 
+                <div 
+                  role="button"
+                  tabIndex={0}
                   className={`${styles.actionBtn} ${isActionable ? styles.btnPrimary : styles.btnSecondary}`}
                   aria-label={`${getButtonText(inc.status)} ${inc.rawText}`}
                   onClick={(e) => {
@@ -91,12 +95,19 @@ export const IncidentFeed: React.FC = () => {
                     e.stopPropagation();
                     setSelectedIncident(inc.id);
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedIncident(inc.id);
+                    }
+                  }}
                 >
                   {getButtonText(inc.status)}
-                </button>
+                </div>
               </div>
             </div>
-          </div>
+          </button>
         );
       })}
     </div>
