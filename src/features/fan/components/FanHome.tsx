@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Navigation, Coffee, ShieldPlus, TriangleAlert, Mic, Bot } from 'lucide-react';
+import { Navigation, Coffee, ShieldPlus, TriangleAlert, Mic, Bot, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './FanHome.module.css';
 
@@ -50,6 +50,14 @@ export const FanHome: React.FC = () => {
         <Link to="/fan/ai-conversation" className={styles.micBtn} aria-label="Start voice assistant">
           <Mic size={20} />
         </Link>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', width: '100%', justifyContent: 'center' }}>
+          <Link to="/fan/ai-conversation" style={{ padding: '0.5rem 1rem', background: 'var(--color-surface)', borderRadius: '20px', textDecoration: 'none', color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+            <Bot size={16} /> Open AI Chat
+          </Link>
+          <Link to="/fan/report" style={{ padding: '0.5rem 1rem', background: 'var(--color-surface)', borderRadius: '20px', textDecoration: 'none', color: 'var(--color-text)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+            <Camera size={16} /> Upload Media
+          </Link>
+        </div>
       </div>
     </motion.div>
   );
