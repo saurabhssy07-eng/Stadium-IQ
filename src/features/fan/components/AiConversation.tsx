@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Bot, ArrowLeft, Send, Loader2, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './AiConversation.module.css';
 
 export const AiConversation: React.FC = React.memo(() => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState<{role: 'user' | 'ai' | 'system', content: string}[]>([
-    { role: 'ai', content: 'Hello! I am your Smart Stadium Assistant. I can help with general stadium info and directions.' }
-  ]);
+  const location = useLocation();
+  const reportedIssue = location.state?.reportedIssue;
+  
+  const initialMessages = reportedIssue 
+    ? [
+        { role: 'ai' as const, content: 'Your incident report has been received and forwarded to the Command Center. Let me know if you need any other assistance while we resolve it.' }
+      ]
+    : [
+        { role: 'ai' as const, content: 'Hello! I am your Smart Stadium Assistant. I can help with general stadium info and directions.' }
+      ];
+
+  const [messages, setMessages] = useState<{role: 'user' | 'ai' | 'system', content: string}[]>(initialMessages);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);

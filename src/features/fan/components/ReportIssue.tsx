@@ -42,7 +42,7 @@ export const ReportIssue: React.FC = React.memo(() => {
         location: { x: 45, y: 35, zoneId: location || 'Unknown Sec' },
         payload: { message: issue, hasImage: !!attachedImage, hasAudio: !!voiceAttached }
       });
-      navigate('/fan/ai-conversation');
+      navigate('/fan/ai-conversation', { state: { reportedIssue: true, issueSummary: issue } });
     }, 500);
   };
 
