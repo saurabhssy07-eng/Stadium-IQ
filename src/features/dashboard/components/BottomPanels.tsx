@@ -3,27 +3,36 @@ import { ShieldAlert, Video, Droplets, CheckCircle, Plus } from 'lucide-react';
 import styles from './BottomPanels.module.css';
 import { useDashboardStore } from '../DashboardStore';
 export const AnalyticsWidget: React.FC = () => {
+  const incidents = useDashboardStore(state => state.incidents);
+  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
+  const resolvedCount = incidents.length - activeIncidents.length;
+  
+  const attendance = 82431 - activeIncidents.length * 42;
+  const avgResponse = 38 + activeIncidents.length * 12;
+  const accuracy = Math.max(85, 98 - activeIncidents.length);
+  const resolvedRate = incidents.length > 0 ? Math.round((resolvedCount / incidents.length) * 100) : 100;
+
   return (
     <div className={styles.kpiContainer}>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Attendance</span>
-        <span className={styles.kpiTileValue}>82,431</span>
+        <span className={styles.kpiTileValue}>{attendance.toLocaleString()}</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Avg Response</span>
-        <span className={styles.kpiTileValue}>38s</span>
+        <span className={styles.kpiTileValue}>{avgResponse}s</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>AI Accuracy</span>
-        <span className={styles.kpiTileValue}>97%</span>
+        <span className={styles.kpiTileValue}>{accuracy}%</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Incidents</span>
-        <span className={styles.kpiTileValue}>12</span>
+        <span className={styles.kpiTileValue}>{incidents.length}</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Resolved</span>
-        <span className={styles.kpiTileValue}>94%</span>
+        <span className={styles.kpiTileValue}>{resolvedRate}%</span>
       </div>
     </div>
   );

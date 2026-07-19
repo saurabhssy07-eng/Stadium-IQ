@@ -66,7 +66,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
     return res.status(200).json({ text });
   } catch (error: any) {
-    console.error('Gemini API Error:', error);
     return res.status(200).json({ 
       text: `[Demo Mode] AI provider error: ${error.message || 'Unknown error'}`,
       fallback: true

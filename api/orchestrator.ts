@@ -92,7 +92,6 @@ Example Output Structure:
       return res.status(200).json({ fallback: true, message: 'Failed to parse AI response as JSON', raw: text });
     }
   } catch (error: any) {
-    console.error('Gemini API Error:', error);
     return res.status(200).json({ 
       fallback: true,
       message: `AI provider error: ${error.message || 'Unknown error'}`

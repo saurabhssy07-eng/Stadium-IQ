@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stadiumEventBus } from '../../../simulation/EventBus';
-import { Mic, Camera, ArrowLeft } from 'lucide-react';
+import { Mic, Camera, ArrowLeft, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './ReportIssue.module.css';
 
@@ -11,6 +11,7 @@ export const ReportIssue: React.FC = React.memo(() => {
   const [location, setLocation] = useState('Gate B');
   const [description, setDescription] = useState('People are slipping near Gate B.');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaMsg, setMediaMsg] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,18 +20,23 @@ export const ReportIssue: React.FC = React.memo(() => {
     setTimeout(() => {
       // Push event into the global event bus -> orchestrator -> dashboard
       stadiumEventBus.publish({
-        id: `fan_evt_${Date.now()}`,
+        id: `fan_rep_${Date.now()}`,
         timestamp: Date.now(),
         source: 'FAN_APP',
-        type: 'HAZARD_REPORT',
+        type: 'HAZARD',
         priority: 'High',
-        location: { x: 15, y: 45, zoneId: location }, 
-        payload: { message: `[Fan Report] ${issue}: ${description}` }
+        location: { x: 45, y: 35, zoneId: location || 'Unknown Sec' },
+        payload: { message: issue }
       });
       
       // Send user to the AI interaction screen to wait for resolution
       navigate('/fan/ai-conversation');
     }, 500);
+  };
+
+  const handleMediaClick = () => {
+    setMediaMsg('Hardware integration simulated for demo purposes.');
+    setTimeout(() => setMediaMsg(''), 3000);
   };
 
   return (
@@ -41,42 +47,36 @@ export const ReportIssue: React.FC = React.memo(() => {
       exit={{ opacity: 0, x: -20 }}
     >
       <header className={styles.header}>
-        <button className={styles.backBtn} aria-label="Go back" onClick={() => navigate(-1)}>
+        <button className={styles.backBtn} aria-label="Go back" onClick={() => navigate('/fan')}>
           <ArrowLeft size={20} />
         </button>
         <div className={styles.title}>Report Issue</div>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit} aria-label="Report Issue Form">
-        <div className={styles.field}>
-          <label htmlFor="issueType" className={styles.label}>Issue</label>
-          <select id="issueType" className={styles.select} value={issue} onChange={e => setIssue(e.target.value)}>
-            <option value="Spill">Spill / Hazard</option>
-            <option value="Medical">Medical Emergency</option>
-            <option value="Security">Security Concern</option>
-            <option value="Facility">Facility Damage</option>
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="issueLocation" className={styles.label}>Location</label>
-          <select id="issueLocation" className={styles.select} value={location} onChange={e => setLocation(e.target.value)}>
-            <option value="Gate A">Gate A</option>
-            <option value="Gate B">Gate B</option>
-            <option value="Gate C">Gate C</option>
-            <option value="Food Court">Food Court</option>
-          </select>
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="issueDescription" className={styles.label}>Description</label>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <label>What's happening?</label>
           <textarea 
-            id="issueDescription"
-            className={styles.textarea} 
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            aria-required="true"
+            placeholder="Describe the issue (e.g., Spill in aisle 4, medical emergency)" 
+            className={styles.textarea}
+            value={issue}
+            onChange={(e) => setIssue(e.target.value)}
+            required
           />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Location (Optional)</label>
+          <div className={styles.locationInputGroup}>
+            <MapPin size={18} className={styles.locationIcon} />
+            <input 
+              type="text" 
+              placeholder="e.g. Sec 112, Row F" 
+              className={styles.inputField}
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </div>
         </div>
 
         <div className={styles.mediaRow}>
@@ -84,7 +84,7 @@ export const ReportIssue: React.FC = React.memo(() => {
             type="button" 
             className={styles.mediaBtn} 
             aria-label="Record voice note"
-            onClick={() => alert('Hardware integration simulated for demo purposes.')}
+            onClick={handleMediaClick}
           >
             <Mic size={18} /> Voice
           </button>
@@ -92,11 +92,12 @@ export const ReportIssue: React.FC = React.memo(() => {
             type="button" 
             className={styles.mediaBtn} 
             aria-label="Take photo"
-            onClick={() => alert('Hardware integration simulated for demo purposes.')}
+            onClick={handleMediaClick}
           >
             <Camera size={18} /> Photo
           </button>
         </div>
+        {mediaMsg && <div style={{ color: 'var(--color-primary)', fontSize: '0.8rem', marginTop: '-0.5rem', marginBottom: '1rem', textAlign: 'center' }}>{mediaMsg}</div>}
 
         <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit Report'}

@@ -63,7 +63,7 @@ export class Orchestrator {
         const data = await response.json();
         if (data.fallback) {
           // Explicitly break out of try block to hit the Demo Simulation fallback pipeline below
-          console.warn('AI Orchestrator API requested fallback:', data.message);
+          console.log('[Demo] Local fallback engaged.');
         } else {
           this.updateLastLog('NLP Engine', 'Completed');
           
@@ -90,7 +90,7 @@ export class Orchestrator {
         }
       }
     } catch (e) {
-      console.warn('AI Orchestrator API failed, falling back to demo simulation', e);
+      console.log('[Demo] Local fallback engaged.');
     }
 
     // Fallback pipeline (if API fails or keys missing)
