@@ -61,28 +61,33 @@ export class Orchestrator {
 
       if (response.ok) {
         const data = await response.json();
-        this.updateLastLog('NLP Engine', 'Completed');
-        
-        this.addLog('Pathfinding', 'AI Route Optimization', 'Pending');
-        await this.delay(200);
-        this.updateLastLog('Pathfinding', 'Completed');
-        
-        this.addLog('Response Agent', 'AI Team Assignment', 'Pending');
-        await this.delay(200);
-        this.updateLastLog('Response Agent', 'Completed');
+        if (data.fallback) {
+          // Explicitly break out of try block to hit the Demo Simulation fallback pipeline below
+          console.warn('AI Orchestrator API requested fallback:', data.message);
+        } else {
+          this.updateLastLog('NLP Engine', 'Completed');
+          
+          this.addLog('Pathfinding', 'AI Route Optimization', 'Pending');
+          await this.delay(200);
+          this.updateLastLog('Pathfinding', 'Completed');
+          
+          this.addLog('Response Agent', 'AI Team Assignment', 'Pending');
+          await this.delay(200);
+          this.updateLastLog('Response Agent', 'Completed');
 
-        const store = useDashboardStore.getState();
-        const incident = store.incidents.find(i => i.id === _incidentId);
-        if (incident) {
-          store.updateIncident(_incidentId, {
-            severity: data.severity || incident.severity,
-            confidence: data.confidence || 90,
-            assignee: data.assignee || 'Team Alpha',
-            reason: data.recommendation || 'AI recommendation unavailable'
-          });
+          const store = useDashboardStore.getState();
+          const incident = store.incidents.find(i => i.id === _incidentId);
+          if (incident) {
+            store.updateIncident(_incidentId, {
+              severity: data.severity || incident.severity,
+              confidence: data.confidence || 90,
+              assignee: data.assignee || 'Team Alpha',
+              reason: data.recommendation || 'AI recommendation unavailable'
+            });
+          }
+          this.addLog('Orchestrator', 'AI Recommendation Published', 'Completed');
+          return; // Exit if real AI succeeded
         }
-        this.addLog('Orchestrator', 'AI Recommendation Published', 'Completed');
-        return; // Exit if real AI succeeded
       }
     } catch (e) {
       console.warn('AI Orchestrator API failed, falling back to demo simulation', e);

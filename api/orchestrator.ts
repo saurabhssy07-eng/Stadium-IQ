@@ -28,8 +28,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // 2. Check for API Key presence (Security Check for Demo Mode Fallback)
   if (!apiKey || apiKey === 'dummy_key') {
-    return res.status(503).json({ 
-      error: 'Service Unavailable', 
+    return res.status(200).json({ 
+      fallback: true,
       message: 'GEMINI_API_KEY is not configured on the server. Falling back to Demo Mode.' 
     });
   }
@@ -74,27 +74,27 @@ Example Output Structure:
     const data = await response.json();
 
     if (!response.ok) {
-      return res.status(500).json({ 
-        error: 'API Error',
+      return res.status(200).json({ 
+        fallback: true,
         message: `API Error: ${JSON.stringify(data.error || data)}`
       });
     }
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      return res.status(500).json({ error: 'No response generated.' });
+      return res.status(200).json({ fallback: true, message: 'No response generated.' });
     }
 
     try {
       const jsonResponse = JSON.parse(text);
       return res.status(200).json(jsonResponse);
     } catch (parseError) {
-      return res.status(500).json({ error: 'Failed to parse AI response as JSON', raw: text });
+      return res.status(200).json({ fallback: true, message: 'Failed to parse AI response as JSON', raw: text });
     }
   } catch (error: any) {
     console.error('Gemini API Error:', error);
-    return res.status(500).json({ 
-      error: 'Internal Server Error',
+    return res.status(200).json({ 
+      fallback: true,
       message: `AI provider error: ${error.message || 'Unknown error'}`
     });
   }

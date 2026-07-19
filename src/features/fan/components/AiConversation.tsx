@@ -31,7 +31,14 @@ export const AiConversation: React.FC = React.memo(() => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessages(prev => [...prev, { role: 'ai', content: data.text || 'Message received by Command Center.' }]);
+        if (data.fallback) {
+          setIsDemoMode(true);
+          setMessages(prev => [...prev, { role: 'system', content: `Demo Mode Activated: ${data.message || 'Server requested fallback'}` }]);
+          await new Promise(r => setTimeout(r, 1500));
+          setMessages(prev => [...prev, { role: 'ai', content: data.text || `[Simulated Response] Report received for: "${userMessage}". A response team has been notified.` }]);
+        } else {
+          setMessages(prev => [...prev, { role: 'ai', content: data.text || 'Message received by Command Center.' }]);
+        }
       } else {
         const errorData = await response.json().catch(() => ({ message: 'Unknown Server Error' }));
         setIsDemoMode(true);

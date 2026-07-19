@@ -26,9 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // 2. Check for API Key presence (Security Check)
   if (!apiKey || apiKey === 'dummy_key') {
-    return res.status(503).json({ 
-      error: 'Service Unavailable', 
-      message: 'GEMINI_API_KEY is not configured on the server. Falling back to Demo Mode.' 
+    return res.status(200).json({ 
+      text: '[Demo Mode] GEMINI_API_KEY is not configured on the server. Falling back to Demo Mode.',
+      fallback: true
     });
   }
 
@@ -46,13 +46,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!response.ok) {
       // If it fails, let's fetch the actual list of models they have access to so we can debug it
-      const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-      const modelsData = await modelsRes.json();
-      const modelNames = modelsData.models ? modelsData.models.map((m: any) => m.name).join(', ') : 'None';
+      let modelNames = 'Unknown';
+      try {
+        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        if (modelsRes.ok) {
+          const modelsData = await modelsRes.json();
+          modelNames = modelsData.models ? modelsData.models.map((m: any) => m.name).join(', ') : 'None';
+        }
+      } catch (e) {
+        // Ignore errors fetching models
+      }
 
-      return res.status(500).json({ 
-        error: 'API Error',
-        message: `API Error: ${JSON.stringify(data.error || data)}. Available Models for your key: ${modelNames}`
+      return res.status(200).json({ 
+        text: `[Demo Mode] API Error: ${JSON.stringify(data.error || data)}. Models: ${modelNames}`,
+        fallback: true
       });
     }
 
@@ -60,9 +67,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ text });
   } catch (error: any) {
     console.error('Gemini API Error:', error);
-    return res.status(500).json({ 
-      error: 'Internal Server Error',
-      message: `AI provider error: ${error.message || 'Unknown error'}`
+    return res.status(200).json({ 
+      text: `[Demo Mode] AI provider error: ${error.message || 'Unknown error'}`,
+      fallback: true
     });
   }
 }

@@ -263,15 +263,15 @@ export const DashboardLayout: React.FC = () => {
               <div style={{ flex: 1 }} />
               
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}><AnimatedNumber value={82431} /></span>
+                <span className={styles.healthValue}><AnimatedNumber value={82431 - activeIncidents.length * 42} /></span>
                 <span className={styles.healthLabel}>Attendance</span>
               </div>
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}>38s</span>
+                <span className={styles.healthValue}>{38 + (activeIncidents.length * 12)}s</span>
                 <span className={styles.healthLabel}>Avg Response</span>
               </div>
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}>97%</span>
+                <span className={styles.healthValue}>{Math.max(85, 98 - activeIncidents.length)}%</span>
                 <span className={styles.healthLabel}>AI Accuracy</span>
               </div>
             </header>
