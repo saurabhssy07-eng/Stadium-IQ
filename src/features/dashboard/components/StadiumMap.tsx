@@ -2,7 +2,7 @@ import React from 'react';
 import { useDashboardStore } from '../DashboardStore';
 import styles from './StadiumMap.module.css';
 
-export const StadiumMap: React.FC = () => {
+export const StadiumMap: React.FC = React.memo(() => {
   const zones = useDashboardStore(state => state.zones);
   const incidents = useDashboardStore(state => state.incidents);
 
@@ -176,4 +176,4 @@ export const StadiumMap: React.FC = () => {
       </div>
     </div>
   );
-};
+});

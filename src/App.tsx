@@ -31,8 +31,10 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<FullScreenLoader />}>
+      <Suspense fallback={null}>
         <DemoPanel />
+      </Suspense>
+      <Suspense fallback={<FullScreenLoader />}>
         <Routes>
           <Route path="/dashboard" element={<DashboardLayout />} />
           <Route path="/fan/*" element={<FanLayout />} />

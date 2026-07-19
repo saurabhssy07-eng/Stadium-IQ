@@ -45,6 +45,19 @@ const AnimatedNumber = React.memo(({ value }: { value: number }) => {
   return <>{displayValue.toLocaleString()}</>;
 });
 
+const MatchClock = React.memo(() => {
+  const [matchSeconds, setMatchSeconds] = useState(2535);
+  useEffect(() => {
+    const clockInterval = setInterval(() => {
+      setMatchSeconds(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(clockInterval);
+  }, []);
+  const m = Math.floor(matchSeconds / 60);
+  const s = matchSeconds % 60;
+  return <>{`${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`}</>;
+});
+
 // Reusable Panel Component wrapped in framer-motion
 interface PanelProps {
   id: string;
@@ -84,23 +97,6 @@ export const DashboardLayout: React.FC = () => {
   
   const [demoMenuOpen, setDemoMenuOpen] = useState(false);
   const [zoomedPanelId, setZoomedPanelId] = useState<string | null>(null);
-  
-  // Ticking match clock state (starts at 42:15 = 2535 seconds)
-  const [matchSeconds, setMatchSeconds] = useState(2535);
-
-  useEffect(() => {
-    const clockInterval = setInterval(() => {
-      setMatchSeconds(prev => prev + 1);
-    }, 1000);
-    return () => clearInterval(clockInterval);
-  }, []);
-
-  // Format MM:SS
-  const formatTime = (totalSeconds: number) => {
-    const m = Math.floor(totalSeconds / 60);
-    const s = totalSeconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
 
   // Demo Scenario Trigger
   const runDemoScenario = (scenario: string, type: string, priority: "Low" | "Medium" | "High" | "Critical", zoneId: string) => {
@@ -258,7 +254,7 @@ export const DashboardLayout: React.FC = () => {
                     <span className={styles.healthLabel}>System Status</span>
                   </div>
                   <div className={styles.healthMetric}>
-                    <span className={styles.healthValue}>{formatTime(matchSeconds)}</span>
+                    <span className={styles.healthValue}><MatchClock /></span>
                     <span className={styles.healthLabel}>Match Time</span>
                   </div>
                 </>

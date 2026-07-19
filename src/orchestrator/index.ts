@@ -19,8 +19,7 @@ export class Orchestrator {
     const incident: Incident = {
       id: `inc_${Date.now()}`,
       timestamp: Date.now(),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      rawText: (event.payload as any)?.message || 'System Anomaly Detected',
+      rawText: (event.payload as Record<string, unknown>)?.message as string || 'System Anomaly Detected',
       language: 'en',
       location: event.location,
       type: event.type,

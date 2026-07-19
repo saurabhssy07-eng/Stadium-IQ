@@ -3,16 +3,18 @@ import { useDashboardStore } from '../DashboardStore';
 import { MapPin, Clock, AlertTriangle, ShieldAlert, Info, Users, Timer } from 'lucide-react';
 import styles from './IncidentFeed.module.css';
 
+const TimeAgo = React.memo(({ timestamp }: { timestamp: number }) => {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <>{Math.floor((now - timestamp) / 1000)}s ago</>;
+});
+
 export const IncidentFeed: React.FC = () => {
   const incidents = useDashboardStore(state => state.incidents);
   const setSelectedIncident = useDashboardStore(state => state.setSelectedIncident);
-  // Force a re-render every second to update the "seconds ago" timer
-  const [, setTick] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => setTick(t => t + 1), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   if (incidents.length === 0) {
     return (
@@ -67,8 +69,7 @@ export const IncidentFeed: React.FC = () => {
             <div className={styles.opGrid}>
               <div className={styles.opStat}>
                 <span className={styles.opLabel}>Detected</span>
-                {/* eslint-disable-next-line react-hooks/purity */}
-                <span className={styles.opValue}><Clock size={12} /> {Math.floor((Date.now() - inc.timestamp) / 1000)}s ago</span>
+                <span className={styles.opValue}><Clock size={12} /> <TimeAgo timestamp={inc.timestamp} /></span>
               </div>
               
               <div className={styles.opStat}>
