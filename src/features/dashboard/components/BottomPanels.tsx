@@ -1,38 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldAlert, Video, Droplets, CheckCircle, Plus } from 'lucide-react';
 import styles from './BottomPanels.module.css';
-import { useDashboardStore } from '../DashboardStore';
+import { useDashboardStore, selectKPIs } from '../DashboardStore';
 export const AnalyticsWidget: React.FC = () => {
-  const incidents = useDashboardStore(state => state.incidents);
-  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
-  const resolvedCount = incidents.length - activeIncidents.length;
-  
-  const attendance = 82431 - activeIncidents.length * 42;
-  const avgResponse = 38 + activeIncidents.length * 12;
-  const accuracy = Math.max(85, 98 - activeIncidents.length);
-  const resolvedRate = incidents.length > 0 ? Math.round((resolvedCount / incidents.length) * 100) : 100;
+  const kpis = useDashboardStore(selectKPIs);
 
   return (
     <div className={styles.kpiContainer}>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Attendance</span>
-        <span className={styles.kpiTileValue}>{attendance.toLocaleString()}</span>
+        <span className={styles.kpiTileValue}>{kpis.attendance.toLocaleString()}</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Avg Response</span>
-        <span className={styles.kpiTileValue}>{avgResponse}s</span>
+        <span className={styles.kpiTileValue}>{kpis.avgResponse}s</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>AI Accuracy</span>
-        <span className={styles.kpiTileValue}>{accuracy}%</span>
+        <span className={styles.kpiTileValue}>{kpis.accuracy}%</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Incidents</span>
-        <span className={styles.kpiTileValue}>{incidents.length}</span>
+        <span className={styles.kpiTileValue}>{kpis.incidentCount}</span>
       </div>
       <div className={styles.kpiTile}>
         <span className={styles.kpiTileLabel}>Resolved</span>
-        <span className={styles.kpiTileValue}>{resolvedRate}%</span>
+        <span className={styles.kpiTileValue}>{kpis.resolvedRate}%</span>
       </div>
     </div>
   );

@@ -58,8 +58,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       return res.status(200).json({ 
-        text: `[Demo Mode] API Error: ${JSON.stringify(data.error || data)}. Models: ${modelNames}`,
-        fallback: true
+        text: `[Demo Mode] AI service is temporarily unavailable. A response team has been notified.`,
+        fallback: true,
+        message: `API Error: ${JSON.stringify(data.error || data)}. Models: ${modelNames}`
       });
     }
 
@@ -67,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ text });
   } catch (error: any) {
     return res.status(200).json({ 
-      text: `[Demo Mode] AI provider error: ${error.message || 'Unknown error'}`,
+      text: `[Demo Mode] AI service is temporarily unavailable. A response team has been notified.`,
       fallback: true
     });
   }

@@ -111,3 +111,15 @@ export const useDashboardStore = create<DashboardState>((set) => ({
     };
   })
 }));
+
+export const selectKPIs = (state: DashboardState) => {
+  const activeIncidents = state.incidents.filter(i => i.status !== 'Resolved');
+  const resolvedCount = state.incidents.length - activeIncidents.length;
+  
+  const attendance = 82431 - activeIncidents.length * 42;
+  const avgResponse = 38 + activeIncidents.length * 12;
+  const accuracy = Math.max(85, 98 - activeIncidents.length);
+  const resolvedRate = state.incidents.length > 0 ? Math.round((resolvedCount / state.incidents.length) * 100) : 100;
+
+  return { attendance, avgResponse, accuracy, resolvedRate, incidentCount: state.incidents.length };
+};

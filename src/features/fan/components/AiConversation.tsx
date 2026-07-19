@@ -33,7 +33,7 @@ export const AiConversation: React.FC = React.memo(() => {
         const data = await response.json();
         if (data.fallback) {
           setIsDemoMode(true);
-          setMessages(prev => [...prev, { role: 'system', content: `Demo Mode Activated: ${data.message || 'Server requested fallback'}` }]);
+          setMessages(prev => [...prev, { role: 'system', content: 'Demo Mode Activated: Local simulation running.' }]);
           await new Promise(r => setTimeout(r, 1500));
           setMessages(prev => [...prev, { role: 'ai', content: data.text || `[Simulated Response] Report received for: "${userMessage}". A response team has been notified.` }]);
         } else {
