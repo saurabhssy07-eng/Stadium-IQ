@@ -9,7 +9,7 @@ import { RiskPanel } from './components/RiskPanel';
 import { RecommendationBanner } from './components/RecommendationBanner';
 import { AnalyticsWidget, CrowdFlowWidget, VolunteersWidget, RecentEventsWidget } from './components/BottomPanels';
 import { stadiumEventBus } from '../../simulation/EventBus';
-import { useDashboardStore, selectKPIs } from './DashboardStore';
+import { useDashboardStore } from './DashboardStore';
 import { TabbedPanel } from './components/TabbedPanel';
 import { IncidentDrawer } from './components/IncidentDrawer';
 import styles from './DashboardLayout.module.css';
@@ -94,7 +94,6 @@ export const DashboardLayout: React.FC = () => {
   const incidents = useDashboardStore(state => state.incidents);
   const toastMsg = useDashboardStore(state => state.toastMsg);
   const showToast = useDashboardStore(state => state.showToast);
-  const kpis = useDashboardStore(selectKPIs);
   
   const [demoMenuOpen, setDemoMenuOpen] = useState(false);
   const [zoomedPanelId, setZoomedPanelId] = useState<string | null>(null);
@@ -264,15 +263,15 @@ export const DashboardLayout: React.FC = () => {
               <div style={{ flex: 1 }} />
               
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}><AnimatedNumber value={kpis.attendance} /></span>
+                <span className={styles.healthValue}><AnimatedNumber value={82431 - activeIncidents.length * 42} /></span>
                 <span className={styles.healthLabel}>Attendance</span>
               </div>
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}>{kpis.avgResponse}s</span>
+                <span className={styles.healthValue}>{38 + (activeIncidents.length * 12)}s</span>
                 <span className={styles.healthLabel}>Avg Response</span>
               </div>
               <div className={styles.healthMetric}>
-                <span className={styles.healthValue}>{kpis.accuracy}%</span>
+                <span className={styles.healthValue}>{Math.max(85, 98 - activeIncidents.length)}%</span>
                 <span className={styles.healthLabel}>AI Accuracy</span>
               </div>
             </header>
