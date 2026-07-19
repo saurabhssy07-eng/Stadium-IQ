@@ -101,14 +101,18 @@ export const ReportIssue: React.FC = React.memo(() => {
           id="mediaMsg"
           aria-live="polite"
           style={{
-            color: 'var(--color-primary)',
-            fontSize: '0.8rem',
+            color: 'var(--color-success, #4ade80)',
+            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+            padding: mediaMsg ? '0.5rem' : '0',
+            borderRadius: '8px',
+            fontSize: '0.85rem',
             marginTop: '-0.5rem',
             marginBottom: '1rem',
-            minHeight: '1.2rem',
+            minHeight: mediaMsg ? '1.2rem' : '0',
             opacity: mediaMsg ? 1 : 0,
             textAlign: 'center',
-            transition: 'opacity 180ms ease'
+            transition: 'all 200ms ease',
+            overflow: 'hidden'
           }}
         >
           {mediaMsg}
