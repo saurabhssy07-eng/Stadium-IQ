@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 2. Check for API Key presence (Security Check)
   if (!apiKey || apiKey === 'dummy_key') {
     return res.status(200).json({ 
-      text: '[Demo Mode] GEMINI_API_KEY is not configured on the server. Falling back to Demo Mode.',
+      text: '[Demo Mode] AI service is temporarily unavailable. A response team has been notified.',
       fallback: true
     });
   }
@@ -45,20 +45,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const data = await response.json();
 
     if (!response.ok) {
-      // If it fails, let's fetch the actual list of models they have access to so we can debug it
-      let modelNames = 'Unknown';
-      try {
-        const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        if (modelsRes.ok) {
-          const modelsData = await modelsRes.json();
-          modelNames = modelsData.models ? modelsData.models.map((m: any) => m.name).join(', ') : 'None';
-        }
-      } catch (e) {
-        // Ignore errors fetching models
-      }
-
       return res.status(200).json({ 
-        text: `[Demo Mode] AI service is temporarily unavailable. A response team has been notified.`,
+        text: '[Demo Mode] AI service is temporarily unavailable. A response team has been notified.',
         fallback: true
       });
     }
@@ -67,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ text });
   } catch (error: any) {
     return res.status(200).json({ 
-      text: `[Demo Mode] AI service is temporarily unavailable. A response team has been notified.`,
+      text: '[Demo Mode] AI service is temporarily unavailable. A response team has been notified.',
       fallback: true
     });
   }

@@ -1,6 +1,28 @@
 import { create } from 'zustand';
 import type { Fan, Incident, OrchestratorLog, ZoneMetrics, SystemHealth } from '../../types';
 
+export interface MissionKpis {
+  attendance: number;
+  avgResponseSeconds: number;
+  aiAccuracyPercent: number;
+  activeIncidents: number;
+  resolvedRatePercent: number;
+}
+
+export const computeMissionKpis = (incidents: Incident[]): MissionKpis => {
+  const active = incidents.filter((i) => i.status !== 'Resolved').length;
+  const resolved = incidents.length - active;
+  const resolvedRate = incidents.length > 0 ? Math.round((resolved / incidents.length) * 100) : 100;
+
+  return {
+    attendance: 82431 - active * 42,
+    avgResponseSeconds: 38 + active * 12,
+    aiAccuracyPercent: Math.max(85, 98 - active),
+    activeIncidents: active,
+    resolvedRatePercent: resolvedRate,
+  };
+};
+
 interface DashboardState {
   fans: Fan[];
   incidents: Incident[];

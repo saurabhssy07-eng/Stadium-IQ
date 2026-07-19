@@ -97,7 +97,22 @@ export const ReportIssue: React.FC = React.memo(() => {
             <Camera size={18} /> Photo
           </button>
         </div>
-        {mediaMsg && <div id="mediaMsg" style={{ color: 'var(--color-primary)', fontSize: '0.8rem', marginTop: '-0.5rem', marginBottom: '1rem', textAlign: 'center' }}>{mediaMsg}</div>}
+        <div
+          id="mediaMsg"
+          aria-live="polite"
+          style={{
+            color: 'var(--color-primary)',
+            fontSize: '0.8rem',
+            marginTop: '-0.5rem',
+            marginBottom: '1rem',
+            minHeight: '1.2rem',
+            opacity: mediaMsg ? 1 : 0,
+            textAlign: 'center',
+            transition: 'opacity 180ms ease'
+          }}
+        >
+          {mediaMsg}
+        </div>
 
         <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit Report'}

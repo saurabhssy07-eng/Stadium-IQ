@@ -30,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!apiKey || apiKey === 'dummy_key') {
     return res.status(200).json({ 
       fallback: true,
-      message: 'GEMINI_API_KEY is not configured on the server. Falling back to Demo Mode.' 
+      message: 'AI service is temporarily unavailable. Local simulation running.' 
     });
   }
 
@@ -76,25 +76,25 @@ Example Output Structure:
     if (!response.ok) {
       return res.status(200).json({ 
         fallback: true,
-        message: `API Error: ${JSON.stringify(data.error || data)}`
+        message: 'AI service is temporarily unavailable. Local simulation running.'
       });
     }
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
-      return res.status(200).json({ fallback: true, message: 'No response generated.' });
+      return res.status(200).json({ fallback: true, message: 'AI service is temporarily unavailable. Local simulation running.' });
     }
 
     try {
       const jsonResponse = JSON.parse(text);
       return res.status(200).json(jsonResponse);
     } catch (parseError) {
-      return res.status(200).json({ fallback: true, message: 'Failed to parse AI response as JSON', raw: text });
+      return res.status(200).json({ fallback: true, message: 'AI service is temporarily unavailable. Local simulation running.' });
     }
   } catch (error: any) {
     return res.status(200).json({ 
       fallback: true,
-      message: `AI provider error: ${error.message || 'Unknown error'}`
+      message: 'AI service is temporarily unavailable. Local simulation running.'
     });
   }
 }
