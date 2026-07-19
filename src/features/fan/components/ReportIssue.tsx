@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { stadiumEventBus } from '../../../simulation/EventBus';
-import { Mic, Camera, ArrowLeft, MapPin } from 'lucide-react';
+import { Mic, Camera, ArrowLeft, MapPin, Square, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './ReportIssue.module.css';
 
@@ -9,16 +9,30 @@ export const ReportIssue: React.FC = React.memo(() => {
   const navigate = useNavigate();
   const [issue, setIssue] = useState('Spill');
   const [location, setLocation] = useState('Gate B');
-  const [description, setDescription] = useState('People are slipping near Gate B.');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mediaMsg, setMediaMsg] = useState('');
+  
+  // Media states
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachedImage, setAttachedImage] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [voiceAttached, setVoiceAttached] = useState<number | null>(null);
+  
+  // Timer ref
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     setTimeout(() => {
-      // Push event into the global event bus -> orchestrator -> dashboard
       stadiumEventBus.publish({
         id: `fan_rep_${Date.now()}`,
         timestamp: Date.now(),
@@ -26,17 +40,45 @@ export const ReportIssue: React.FC = React.memo(() => {
         type: 'HAZARD',
         priority: 'High',
         location: { x: 45, y: 35, zoneId: location || 'Unknown Sec' },
-        payload: { message: issue }
+        payload: { message: issue, hasImage: !!attachedImage, hasAudio: !!voiceAttached }
       });
-      
-      // Send user to the AI interaction screen to wait for resolution
       navigate('/fan/ai-conversation');
     }, 500);
   };
 
-  const handleMediaClick = () => {
-    setMediaMsg('Hardware integration simulated for demo purposes.');
-    setTimeout(() => setMediaMsg(''), 3000);
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, you'd upload this. For demo, we just preview it.
+      const url = URL.createObjectURL(file);
+      setAttachedImage(url);
+      setMediaMsg('Photo successfully attached.');
+      setTimeout(() => setMediaMsg(''), 3000);
+    }
+  };
+
+  const handleVoiceClick = () => {
+    if (isRecording) {
+      // Stop recording
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setVoiceAttached(recordingTime);
+      setMediaMsg(`Voice note attached (${recordingTime}s)`);
+      setTimeout(() => setMediaMsg(''), 3000);
+    } else {
+      // Start recording
+      setIsRecording(true);
+      setRecordingTime(0);
+      setVoiceAttached(null);
+      setMediaMsg('');
+      timerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    }
   };
 
   return (
@@ -80,23 +122,60 @@ export const ReportIssue: React.FC = React.memo(() => {
         </div>
 
         <div className={styles.mediaRow}>
+          <input 
+            type="file" 
+            accept="image/*,video/*" 
+            capture="environment"
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            style={{ display: 'none' }} 
+          />
           <button 
             type="button" 
             className={styles.mediaBtn} 
             aria-label="Record voice note"
-            onClick={handleMediaClick}
+            onClick={handleVoiceClick}
+            style={{ 
+              borderColor: isRecording ? 'var(--color-danger)' : 'rgba(255, 255, 255, 0.1)',
+              color: isRecording ? 'var(--color-danger)' : 'var(--color-text-primary)'
+            }}
           >
-            <Mic size={18} /> Voice
+            {isRecording ? (
+              <><Square size={18} fill="currentColor" /> {recordingTime}s</>
+            ) : (
+              <><Mic size={18} /> {voiceAttached ? `${voiceAttached}s` : 'Voice'}</>
+            )}
           </button>
+          
           <button 
             type="button" 
             className={styles.mediaBtn} 
             aria-label="Take photo"
-            onClick={handleMediaClick}
+            onClick={handlePhotoClick}
+            style={{ 
+              borderColor: attachedImage ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.1)',
+              color: attachedImage ? 'var(--color-primary)' : 'var(--color-text-primary)'
+            }}
           >
-            <Camera size={18} /> Photo
+            {attachedImage ? (
+              <><ImageIcon size={18} /> Attached</>
+            ) : (
+              <><Camera size={18} /> Photo</>
+            )}
           </button>
         </div>
+        
+        {/* Preview Area if image attached */}
+        {attachedImage && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-0.5rem' }}>
+            <img 
+              src={attachedImage} 
+              alt="Attached preview" 
+              style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }} 
+            />
+          </div>
+        )}
+
         <div
           id="mediaMsg"
           aria-live="polite"
@@ -118,7 +197,7 @@ export const ReportIssue: React.FC = React.memo(() => {
           {mediaMsg}
         </div>
 
-        <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+        <button type="submit" className={styles.submitBtn} disabled={isSubmitting || isRecording}>
           {isSubmitting ? 'Submitting...' : 'Submit Report'}
         </button>
       </form>
