@@ -25,7 +25,7 @@ This checklist confirms that StadiumIQ AI has completed all QA and Deployment re
 
 ## Repository Presentation
 - [x] Problem and Solution outlined
-- [x] Architecture Diagram included (Mermaid.js)
+- [x] Architecture Diagram included
 - [x] Tech Stack listed
 - [x] Installation steps verified
 

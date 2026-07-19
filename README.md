@@ -109,14 +109,14 @@ Quality is paramount. We implemented a rigorous QA pipeline:
 - **Integration Workflow:** The `Fan Report -> EventBus -> Orchestrator -> DashboardStore` pipeline is verified with an end-to-end integration test.
 - Run tests: `npm run test`
 
-## 10. Accessibility
+## 11. Accessibility
 Built to enterprise standards.
 - **Lighthouse Score:** 95+ Accessibility.
 - **Screen Readers:** ARIA-live regions announce AI decisions dynamically.
 - **Keyboard Navigation:** Fully focusable UI elements across the Fan App and Dashboard.
 - **Contrast:** Strict adherence to high-contrast dark mode guidelines.
 
-## 11. Installation
+## 12. Installation
 ```bash
 git clone https://github.com/saurabhssy07-eng/Stadium-IQ.git
 cd Stadium-IQ
@@ -124,7 +124,7 @@ npm install
 npm run dev
 ```
 
-## 12. Future Scope
+## 13. Future Scope
 - **Hardware Integration:** Connecting real turnstile API data instead of the simulated Digital Twin.
 - **Native Mobile:** Migrating the Fan Interface to React Native.
 - **Computer Vision:** Piping CCTV feed analysis directly into the Orchestrator.

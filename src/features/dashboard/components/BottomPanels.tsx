@@ -162,6 +162,7 @@ export const RecentEventsWidget: React.FC<{ isZoomed?: boolean }> = ({ isZoomed 
     <div className={styles.widgetContainer}>
       <div 
         className={styles.logList} 
+        aria-live="polite" 
         style={{ 
           padding: '0.5rem 0', 
           position: 'relative',
